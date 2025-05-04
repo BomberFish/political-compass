@@ -10,17 +10,27 @@ const App: Component<{}, {results: Result[]}> = function () {
         font-size: 2rem;
         margin-bottom: 1rem;
       }
+      h2 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+
       .compass {
         position: relative;
         width: 500px;
         height: 500px;
+        max-width: calc(100vw - 4rem);
+        max-height: calc(100vw - 4rem);
         border: 1px solid #000;
-        margin: 0 auto;
+        margin-block: 1rem;
       }
+
       .quadrant {
         position: absolute;
         width: 250px;
         height: 250px;
+        max-width: calc(50vw - 2rem);
+        max-height: calc(50vw - 2rem);
       }
       .auth-left {
         top: 0;
@@ -72,7 +82,9 @@ const App: Component<{}, {results: Result[]}> = function () {
       }
       .label {
         position: absolute;
-        font-size: 0.8rem;
+        font-size: 1.1rem;
+        text-align: center;
+        font-weight: 500;
       }
       .economic-left {
         left: 5px;
@@ -109,10 +121,59 @@ const App: Component<{}, {results: Result[]}> = function () {
         width: 100%;
         height: 100%;
       }
+
+      .export {
+        margin-bottom: 1rem;
+      }
+
+      .import-export {
+        margin-top: 2rem;
+      }
+
+      .add {
+        display: flex;
+        gap: 0.3rem;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        .compass {
+          border-color: #666;
+        }
+
+        .axis {
+          background-color: #888;
+        }
+
+        .grid-line {
+          background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .auth-left {
+          background-color: rgba(255, 80, 80, 0.4);
+        }
+
+        .auth-right {
+          background-color: rgba(80, 80, 255, 0.4);
+        }
+
+        .lib-left {
+          background-color: rgba(80, 255, 80, 0.4);
+        }
+
+        .lib-right {
+          background-color: rgba(255, 255, 80, 0.4);
+        }
+
+        .point {
+          background-color: #ff3333;
+          border-color: #ccc;
+        }
+      }
     `
     return (
         <div>
           <h1>Political Compass Comparison!</h1>
+          <a href="https://github.com/BomberFish/political-compass" target="_blank" rel="noopener noreferrer">Source Code</a>
           <div class="compass">
             {/* Quadrants */}
             <div class="quadrant auth-left"></div>
@@ -165,8 +226,55 @@ const App: Component<{}, {results: Result[]}> = function () {
               <input type="text" name="name" placeholder="Name" />
               <input type="number" name="economic" placeholder="Economic" min="-10" max="10" step="0.01" />
               <input type="number" name="social" placeholder="Social" min="-10" max="10" step="0.01" />
-              <button type="submit">Add</button>
+              <button type="submit">Add!</button>
             </form>
+            <div class="import-export">
+              <h2>Import/Export</h2>
+
+              <div class="export">
+                <button on:click={() => {
+                  const a = document.createElement('a');
+                  a.setAttribute('href', 'data:application/json;charset=utf-8,'+ encodeURIComponent(JSON.stringify(this.results)));
+                  a.setAttribute('download', 'political-compass-data.json');
+                  a.click();
+                }}>
+                  Export as JSON
+                </button>
+              </div>
+
+              <div class="import">
+                <label for="import-json">Import JSON: </label>
+                <input
+                  type="file"
+                  id="import-json"
+                  accept=".json"
+                  on:change={(e: Event) => {
+                    const input = e.target as HTMLInputElement;
+                    if (input.files && input.files.length > 0) {
+                      const reader = new FileReader();
+                      reader.readAsText(input.files[0], "UTF-8");
+                      reader.onload = e => {
+                        if (e.target && e.target.result) {
+                          try {
+                            const jsonData = JSON.parse(e.target.result as string);
+                            if (Array.isArray(jsonData)) {
+                              this.results = jsonData.map((item: any) => {
+                                return new Result(item.name, item.economic, item.social);
+                              });
+                            } else {
+                              alert("Invalid JSON format. Expected an array of results.");
+                            }
+                          } catch (error) {
+                            console.error("Error parsing JSON file:", error);
+                            alert("Error parsing JSON file. Please check the format.");
+                          }
+                        }
+                      };
+                    }
+                  }}
+                />
+              </div>
+            </div>
         </div>
     );
 };
