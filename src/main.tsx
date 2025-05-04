@@ -21,16 +21,16 @@ const App: Component<{}, {results: Result[]}> = function () {
         height: 500px;
         max-width: calc(100vw - 4rem);
         max-height: calc(100vw - 4rem);
-        border: 1px solid #000;
+        border: 2px solid #aaa;
         margin-block: 1rem;
       }
 
       .quadrant {
         position: absolute;
-        width: 250px;
-        height: 250px;
-        max-width: calc(50vw - 2rem);
-        max-height: calc(50vw - 2rem);
+        width: 249px;
+        height: 249px;
+        max-width: calc(50vw - 2rem - 2px);
+        max-height: calc(50vw - 2rem - 2px);
       }
       .auth-left {
         top: 0;
@@ -54,19 +54,19 @@ const App: Component<{}, {results: Result[]}> = function () {
       }
       .axis {
         position: absolute;
-        background-color: #000;
+        background-color: #aaa;
       }
       .horizontal-axis {
         width: 100%;
-        height: 1px;
-        top: 50%;
+        height: 2px;
+        top: calc(50% - 1px);
         left: 0;
       }
       .vertical-axis {
-        width: 1px;
+        width: 2px;
         height: 100%;
         top: 0;
-        left: 50%;
+        left: calc(50% - 1px);
       }
       .grid-line {
         position: absolute;
@@ -89,12 +89,14 @@ const App: Component<{}, {results: Result[]}> = function () {
       .economic-left {
         left: 5px;
         top: 50%;
-        transform: translateY(-50%);
+        transform: rotate(-90deg) translateX(-50%);
+        transform-origin: top left;
       }
       .economic-right {
         right: 5px;
         top: 50%;
-        transform: translateY(-50%);
+        transform: rotate(90deg) translateX(50%);
+        transform-origin: top right;
       }
       .social-auth {
         top: 5px;
@@ -137,11 +139,11 @@ const App: Component<{}, {results: Result[]}> = function () {
 
       @media (prefers-color-scheme: dark) {
         .compass {
-          border-color: #666;
+          border-color: #7a7a7a;
         }
 
         .axis {
-          background-color: #888;
+          background-color: #7a7a7a;
         }
 
         .grid-line {
@@ -224,15 +226,15 @@ const App: Component<{}, {results: Result[]}> = function () {
             this.results = [...this.results];
           }}>
               <input type="text" name="name" placeholder="Name" />
-              <input type="number" name="economic" placeholder="Economic" min="-10" max="10" step="0.01" />
-              <input type="number" name="social" placeholder="Social" min="-10" max="10" step="0.01" />
+              <input type="number" name="economic" placeholder="Economic" min="-10" max="10" step="0.01" required />
+              <input type="number" name="social" placeholder="Social" min="-10" max="10" step="0.01" required />
               <button type="submit">Add!</button>
             </form>
             <div class="import-export">
               <h2>Import/Export</h2>
 
               <div class="export">
-                <button on:click={() => {
+                <button bind:disabled={use(this.results, r=>r.length == 0)} on:click={() => {
                   const a = document.createElement('a');
                   a.setAttribute('href', 'data:application/json;charset=utf-8,'+ encodeURIComponent(JSON.stringify(this.results)));
                   a.setAttribute('download', 'political-compass-data.json');
