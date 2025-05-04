@@ -1,103 +1,187 @@
-//You may want to switch this to 'dreamland' when building for prod
 import 'dreamland/dev';
-
-//used to modify stuff outside of components
 import './index.css';
 
-//the base style (used in the root div)
-const baseStyle = css`
-    width: 100%;
-    height: 100%;
-    min-height: 100%;
-    background: #181a1b;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    gap: 6px;
-`;
+const App: Component<{}, {results: Result[]}> = function () {
+    this.results = []
+    this.css = `
+      font-family: system-ui, sans-serif;
+      padding: 2rem;
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+      }
+      .compass {
+        position: relative;
+        width: 500px;
+        height: 500px;
+        border: 1px solid #000;
+        margin: 0 auto;
+      }
+      .quadrant {
+        position: absolute;
+        width: 250px;
+        height: 250px;
+      }
+      .auth-left {
+        top: 0;
+        left: 0;
+        background-color: rgba(255, 0, 0, 0.2); /* Red */
+      }
+      .auth-right {
+        top: 0;
+        right: 0;
+        background-color: rgba(0, 0, 255, 0.2); /* Blue */
+      }
+      .lib-left {
+        bottom: 0;
+        left: 0;
+        background-color: rgba(0, 255, 0, 0.2); /* Green */
+      }
+      .lib-right {
+        bottom: 0;
+        right: 0;
+        background-color: rgba(255, 255, 0, 0.2); /* Yellow */
+      }
+      .axis {
+        position: absolute;
+        background-color: #000;
+      }
+      .horizontal-axis {
+        width: 100%;
+        height: 1px;
+        top: 50%;
+        left: 0;
+      }
+      .vertical-axis {
+        width: 1px;
+        height: 100%;
+        top: 0;
+        left: 50%;
+      }
+      .grid-line {
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.1);
+      }
+      .horizontal-grid {
+        width: 100%;
+        height: 1px;
+      }
+      .vertical-grid {
+        width: 1px;
+        height: 100%;
+      }
+      .label {
+        position: absolute;
+        font-size: 0.8rem;
+      }
+      .economic-left {
+        left: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+      .economic-right {
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+      .social-auth {
+        top: 5px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      .social-lib {
+        bottom: 5px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
 
-//sets the styles for the dreamland logo
-const img = css`
-    width: 200px;
-    height: 200px;
-`;
+      .point {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: #f00;
+        border: 2px solid #000;
+      }
 
-//sets the styles for h1 tag ("Dreamland.js")
-const title = css`
-    font-size: 3.2em;
-`;
-
-//set the styles for the p tag ("edit something something to modify this page")
-const getStarted = css`
-    font-size: 1.2em;
-`;
-
-//sets the styles for the div the buttons are contained in
-const buttonRow = css`
-    display: flex;
-    flex-direction: row;
-    gap: 8px;
-`;
-
-//sets the styles for the button with the count in it
-const counterButton = css`
-    color: white;
-    background: #9932b3;
-    border: none;
-    border-radius: 8px;
-    font-size: 1em;
-    padding: 0.6em 1.2em;
-    cursor: pointer;
-`;
-
-//sets the styles for the link to the dreamland.js docs
-const docsButton = css`
-    color: white;
-    background-color: #9932b3;
-    border: none;
-    border-radius: 8px;
-    font-size: 1em;
-    padding: 0.6em 1.2em;
-    text-decoration: none;
-`;
-
-// typescript syntax for defining components
-const App: Component<
-    {
-        // component properties. if you had a component that took a property like `<Button text="..." /> you would use a type like the one in the following line
-        // text: string
-    },
-    {
-        // types for internal state
-        counter: number;
-    }
-> = function () {
-    this.counter = 0;
+      .points {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+    `
     return (
-        <div class={baseStyle}>
-            <img class={img} src="/logo.svg"></img>
-            <h1 class={title}>Dreamland.js</h1>
-            <p class={getStarted}>Edit src/index.tsx to modfiy this page</p>
-            <br />
-            <div class={buttonRow}>
-                <button class={counterButton} on:click={() => this.counter++}>
-                    Count is: {use(this.counter)}
-                </button>
-                <a
-                    class={docsButton}
-                    href="https://dreamland.js.org/learn"
-                    target="_blank"
-                    rel="noreferrer noopener"
-                >
-                    Get Started
-                </a>
+        <div>
+          <h1>Political Compass Comparison!</h1>
+          <div class="compass">
+            {/* Quadrants */}
+            <div class="quadrant auth-left"></div>
+            <div class="quadrant auth-right"></div>
+            <div class="quadrant lib-left"></div>
+            <div class="quadrant lib-right"></div>
+
+            {/* Main axes */}
+            <div class="axis horizontal-axis"></div>
+            <div class="axis vertical-axis"></div>
+
+            {/* Grid lines - horizontal */}
+            <div class="grid-line horizontal-grid" style={{ top: "20%" }}></div>
+            <div class="grid-line horizontal-grid" style={{ top: "40%" }}></div>
+            <div class="grid-line horizontal-grid" style={{ top: "60%" }}></div>
+            <div class="grid-line horizontal-grid" style={{ top: "80%" }}></div>
+
+            {/* Grid lines - vertical */}
+            <div class="grid-line vertical-grid" style={{ left: "20%" }}></div>
+            <div class="grid-line vertical-grid" style={{ left: "40%" }}></div>
+            <div class="grid-line vertical-grid" style={{ left: "60%" }}></div>
+            <div class="grid-line vertical-grid" style={{ left: "80%" }}></div>
+
+            {/* Labels */}
+            <div class="label economic-left">Economic Left</div>
+            <div class="label economic-right">Economic Right</div>
+            <div class="label social-auth">Authoritarian</div>
+            <div class="label social-lib">Libertarian</div>
+
+            <div class="points">
+              {use(this.results, r=>r.map((result)=>(
+                <div class="point" title={result.name} style={{
+                  left: `${((result.economic + 10) / 20) * 100}%`,
+                  top: `${100 - ((result.social + 10) / 20) * 100}%`
+                }}></div>
+              )))}
             </div>
+          </div>
+          <form class="add" on:submit={(e: FormDataEvent) => {
+            e.preventDefault();
+            const formData = new FormData(e.target as HTMLFormElement);
+            const name = formData.get('name') as string;
+            const economic = parseFloat(formData.get('economic') as string);
+            const social = parseFloat(formData.get('social') as string);
+            console.log(formData, name, economic, social);
+            this.results.push(new Result(name, economic, social));
+            console.log(this.results);
+            this.results = [...this.results];
+          }}>
+              <input type="text" name="name" placeholder="Name" />
+              <input type="number" name="economic" placeholder="Economic" min="-10" max="10" step="0.01" />
+              <input type="number" name="social" placeholder="Social" min="-10" max="10" step="0.01" />
+              <button type="submit">Add</button>
+            </form>
         </div>
     );
 };
+
+class Result {
+  name: string;
+    economic: number;
+    social: number;
+
+    constructor(name: string, economic: number, social: number) {
+        this.name = name;
+        this.economic = economic;
+        this.social = social;
+    }
+}
 
 window.addEventListener('load', () => {
     document.getElementById('app')!.replaceWith(<App />);
