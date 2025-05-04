@@ -1,4 +1,4 @@
-import 'dreamland/dev';
+import 'dreamland';
 import './index.css';
 
 const App: Component<{}, {results: Result[]}> = function () {
@@ -133,8 +133,17 @@ const App: Component<{}, {results: Result[]}> = function () {
       }
 
       .add {
+        display: -webkit-box;
+        display: -ms-flexbox;
         display: flex;
-        gap: 0.3rem;
+        margin-right: 0.3rem;
+        margin-left: 0.3rem;
+      }
+      .add > * {
+        margin-right: 0.3rem;
+      }
+      .add > *:last-child {
+        margin-right: 0;
       }
 
       @media (prefers-color-scheme: dark) {

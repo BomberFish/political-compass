@@ -9,7 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vitejs/plugin-legacy": "^6.1.1",
     "dreamland": "^0.0.24",
+    "lightningcss": "^1.29.3",
     "vite-plugin-dreamland": "^1.2.0"
   },
   "devDependencies": {
